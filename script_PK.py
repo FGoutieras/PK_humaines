@@ -1,7 +1,8 @@
 import csv
+import os
 
 cmd.run('fetch_mmcif.py')
-cmd.set('fetch_path', cmd.exp_path('./cif'), quiet=0)
+#cmd.set('fetch_path', cmd.exp_path('./cif'), quiet=0)
 
 def import_file(fichier,col):
     liste_struct=[] 
@@ -17,9 +18,11 @@ def import_file(fichier,col):
 
 list = import_file("O15530_pdb.csv",1)
 
-fetch_mmcif('2GU8', assembly=1, path="./cif")
+os.chdir("./cif")
+fetch_mmcif('2GU8', assembly=1)
 
-for struct in list[0:3]:
-    fetch_mmcif(struct, assembly=1, path="./cif")
+for struct in list[0:2]:
+    fetch_mmcif(struct, assembly=1)
     cmd.align(struct,"2GU8")
+os.chdir("..")    
 cmd.zoom()
