@@ -1,5 +1,7 @@
 # Copyright 2022-2023 Stefano Trapani stefano.trapani@umontpellier.fr
 #
+# 2023-10-30   use .cif instead of .cif.gz files
+# 2023-10-30   output message about actual use of local or remote path
 # 2023-10-04   uses connect_mode=4
 # 2023-10-01   uses atom ID now (rather that atom index)
 #              sets numeric_type=0 for all unobserved residues
@@ -11,6 +13,7 @@
 
 from pymol import cmd
 import            pymol
+import            os.path
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def fetch_mmcif(code, name=None, assembly=0, path=".", file=None, quiet=0):
@@ -20,7 +23,7 @@ DESCRIPTION
     "fetch_mmcif" downloads a PDBx/mmcif file (asymmetric unit or biological 
     assembly) from https://files.wwpdb.org or read it from disk:
 
-    - if a file named <code>-assembly<assembly>.cif.gz (or <code>.cif.gz if 
+    - if a file named <code>-assembly<assembly>.cif (or <code>.cif if 
       assembly==0) already exists in <path>, then the existing file will be 
       read;
     - otherwise, the file will be retrieved from the internet and saved in 
@@ -56,7 +59,6 @@ PYMOL API
     """
     CODE=code
     ASSEMBLY=int(assembly)
-    print(ASSEMBLY)
     NAME=name
     if NAME is None:
         NAME=CODE
@@ -68,7 +70,8 @@ PYMOL API
         FILE=CODE
         if ASSEMBLY>0:
             FILE+="-assembly"+str(ASSEMBLY)
-        FILE+=".cif.gz"
+        FILE+=".cif"
+    use_local=os.path.isfile(PATH+"/"+FILE)
     QUIET=int(quiet)
     
     # keep track of initial values of host_Paths_cif and connect_mode
@@ -78,11 +81,15 @@ PYMOL API
     cmd.set('connect_mode',4)
     #
     if ASSEMBLY==0 :
-        pymol.importing.hostPaths["cif"] = "https://files.wwpdb.org/download/{code}.cif.gz"
+        pymol.importing.hostPaths["cif"] = "https://files.wwpdb.org/download/{code}.cif"
     elif ASSEMBLY>0 :
-        pymol.importing.hostPaths["cif"] = "https://files.wwpdb.org/download/{code}-assembly"+str(ASSEMBLY)+".cif.gz"
+        pymol.importing.hostPaths["cif"] = "https://files.wwpdb.org/download/{code}-assembly"+str(ASSEMBLY)+".cif"
     if not QUIET:
-        print(' Using import path: ',pymol.importing.hostPaths["cif"])
+        print(' Import paths \n  local  : '+PATH+'/'+FILE+'\n  remote : '+pymol.importing.hostPaths["cif"].replace("{code}",CODE))
+        if use_local:
+            print(' Using LOCAL path as local file exists')
+        else:
+            print(' Using REMOTE path as local file does not exist')
     
     # temporary fetch : retrieve the sequential residue numbers (label_seq_id)
     #my_space={'label_seq_id':[0]}                                                         # 2022-10-01_OLD

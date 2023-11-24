@@ -1,10 +1,10 @@
 import csv
-from fetch_mmcif.py import fetch_mmcif
 
+cmd.run('fetch_mmcif.py')
 cmd.set('fetch_path', cmd.exp_path('./cif'), quiet=0)
 
 def import_file(fichier,col):
-    liste_struct=[]
+    liste_struct=[] 
     with open(fichier) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')    
         line_count = 0
@@ -17,9 +17,9 @@ def import_file(fichier,col):
 
 list = import_file("O15530_pdb.csv",1)
 
-cmd.fetch_mmcif("2GU8",assembly=1)
+fetch_mmcif('2GU8', assembly=1, path="./cif")
 
-for struct in list[0:5]:
-    cmd.fetch_mmcif(struct, assembly=1)
+for struct in list[0:3]:
+    fetch_mmcif(struct, assembly=1, path="./cif")
     cmd.align(struct,"2GU8")
 cmd.zoom()
