@@ -24,7 +24,7 @@ fetch_mmcif('2GU8', assembly=1) # on fetch la chaine correspondant à la PKACA h
 nb_alpha_carbons=[]
 rmsd_list=[]
 
-for struct in list[0:10]:
+for struct in list:
     fetch_mmcif(struct, assembly=1)
     out = cmd.align(struct,"2GU8") #aligner la chaine qui correspond à la PKACA humaine, en récupérant le code sur la pdb
     string = "2GU8 and "+struct+" and name ca"
@@ -40,7 +40,10 @@ cmd.zoom()
 
 rows = zip(list, nb_alpha_carbons, rmsd)
 
-with open('data.csv', 'w', newline='') as f:
-   writer = csv.writer(f)
-   for row in rows:
-       writer.writerow(row)
+header = ['PDB ID', 'Nb de carbones alphas analysés', 'RMSD (Å)']
+
+with open('output.csv', 'w', newline='') as f:
+  writer = csv.writer(f)
+  writer.writerow(header)
+  for row in rows:
+      writer.writerow(row)
