@@ -19,12 +19,28 @@ def import_file(fichier,col):
 list = import_file("O15530_pdb.csv",1)
 
 os.chdir("./cif")
-fetch_mmcif('2GU8', name='2GU8', assembly=1) # on fetch la chaine correspondant à la PKACA humaine
-time.sleep(1) # wait for 1 second
+fetch_mmcif('2GU8', assembly=1) # on fetch la chaine correspondant à la PKACA humaine
 
-for struct in list[0:2]:
-    fetch_mmcif(struct, name=struct, assembly=1)
-    time.sleep(1) # wait for 1 second
-    cmd.align(struct,"2GU8") #aligner la chaine qui correspond à la PKACA humaine, en récupérant le code sur la pdb
+nb_alpha_carbons=[]
+rmsd_list=[]
+
+for struct in list[0:10]:
+    fetch_mmcif(struct, assembly=1)
+    out = cmd.align(struct,"2GU8") #aligner la chaine qui correspond à la PKACA humaine, en récupérant le code sur la pdb
+    string = "2GU8 and "+struct+" and name ca"
+    cmd.select('alpha_carbons', "2GU8 and "+struct+" and name ca")
+    nb_alpha_carbons.append(cmd.count('alpha_carbons'))
+    rmsd, n_atoms, n_cycles, n_rmsd_pre, n_atom_pre, score, n_res = out
+    rmsd_list.append(rmsd)
+    
 os.chdir("..")    
 cmd.zoom()
+
+# tout exporter dans un csv
+
+rows = zip(list, nb_alpha_carbons, rmsd)
+
+with open('data.csv', 'w', newline='') as f:
+   writer = csv.writer(f)
+   for row in rows:
+       writer.writerow(row)
