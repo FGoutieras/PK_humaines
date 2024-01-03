@@ -20,7 +20,7 @@ def loadStructures(PDB_IDs, ref="2GU8"):
     """
     Load the protein structures: reference and extracted ones
     """
-    os.chdir("./Super")
+    os.chdir("../Super")
     # Structure choisie de la PKACA humaine (code UniProt P17612)
     fetch_mmcif(code=ref, name=ref, assembly=1)
 
@@ -28,7 +28,7 @@ def loadStructures(PDB_IDs, ref="2GU8"):
     for code in PDB_IDs:
         fetch_mmcif(code=code, name=code, assembly=1)
         cmd.remove("all and not polym")
-    os.chdir("..")  
+    os.chdir("../Projet")  
 
 def splitStates(PDB_IDs):
     for object in PDB_IDs:
@@ -40,9 +40,9 @@ def splitStates(PDB_IDs):
 def simpleAlignment(PDB_IDs, ref="2GU8"):
     for code in PDB_IDs:
         if code != ref:
-            rmsd, n_atoms, n_cycles, n_rmsd_pre, n_atom_pre, score, n_res = cmd.align(mobile=code, target=ref, quiet=0)
+            rmsd, n_atoms, n_cycles, n_rmsd_pre, n_atom_pre, score, n_res = cmd.align(mobile=code, target=ref, quiet=1)
             if rmsd > 4:
-                print("Problème lors de l'alignement de la structure",code)
+                print("Problème lors de l'alignement de la structure ",code,", RMSD =",rmsd, sep="")
 
 def getAlphaCarbons(list, ref="2GU8"):
     for struct in list:
@@ -58,7 +58,7 @@ rmsd_list=[]
 
 infile = "rcsb_pdb_custom_report.csv"
 list = extractPDB_IDs(infile)
-list = list[0:2]
+list = list[0:10]
 loadStructures(list)
 splitStates(list)
 list = cmd.get_object_list()
@@ -66,6 +66,3 @@ simpleAlignment(list)
 getAlphaCarbons(list)
 
 cmd.zoom()
-
-# rmsd, n_atoms, n_cycles, n_rmsd_pre, n_atom_pre, score, n_res = out
-# rmsd_list.append(rmsd)
