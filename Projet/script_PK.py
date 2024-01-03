@@ -46,7 +46,8 @@ def simpleAlignment(PDB_IDs, ref="2GU8"):
         if code != ref:
             rmsd, n_atoms, n_cycles, n_rmsd_pre, n_atom_pre, score, n_res = cmd.align(mobile=code, target=ref, quiet=1)
             if rmsd > 4:
-                print("Problème lors de l'alignement de la structure ",code,", RMSD =",rmsd, sep="")
+                print("Problème lors de l'alignement de la structure ",code,", protéine non prise en comptpe (RMSD =",rmsd,")", sep="")
+                cmd.delete(code)
     cmd.zoom()
 
 # prints and returns a list of the number of alpha carbons in each alignment
