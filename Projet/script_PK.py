@@ -63,7 +63,7 @@ rmsd_list=[]
 
 file = "rcsb_pdb_custom_report.csv"
 list = extractPDB_IDs(file)
-list = list[0:10]
+list = list[0:10] # we only keep the first 10 structures for easier testing
 loadStructures(list)
 splitStates(list)
 list = cmd.get_object_list()
