@@ -61,8 +61,8 @@ def getAlphaCarbons(list, ref="2GU8"):
 nb_alpha_carbons=[]
 rmsd_list=[]
 
-infile = "rcsb_pdb_custom_report.csv"
-list = extractPDB_IDs(infile)
+file = "rcsb_pdb_custom_report.csv"
+list = extractPDB_IDs(file)
 list = list[0:10]
 loadStructures(list)
 splitStates(list)
