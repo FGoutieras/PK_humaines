@@ -17,7 +17,7 @@ def extractPDB_IDs(infile):
             ID_list.append(row[1])
     return ID_list
 
-# load the reference and all the structures from the given list in the Super folder
+# Load the reference and all the structures from the given list in the Super folder
 def loadStructures(PDB_IDs, ref="2GU8"):
     """
     Load the protein structures: reference and extracted ones
@@ -32,7 +32,6 @@ def loadStructures(PDB_IDs, ref="2GU8"):
         cmd.remove("all and not polym")
     os.chdir("../Projet")  
 
-# je saurais pas l'expliquer 
 def splitStates(PDB_IDs):
     for object in PDB_IDs:
         stateCount = cmd.count_states(object)
@@ -40,7 +39,7 @@ def splitStates(PDB_IDs):
             cmd.split_states(object)
             cmd.delete(object)
 
-# aligns all the structures in the list to the reference and prints an error message if te RMSD is too high (> 4)
+# Aligns all the structures in the list to the reference and prints an error message if te RMSD is too high (> 4)
 def simpleAlignment(PDB_IDs, ref="2GU8"):
     for code in PDB_IDs:
         if code != ref:
@@ -50,7 +49,7 @@ def simpleAlignment(PDB_IDs, ref="2GU8"):
                 cmd.delete(code)
     cmd.zoom()
 
-# prints and returns a list of the number of alpha carbons in each alignment
+# Prints and returns a list of the number of alpha carbons in each alignment
 def getAlphaCarbons(list, ref="2GU8"):
     for struct in list:
         name = struct + "_alpha_carbons"
