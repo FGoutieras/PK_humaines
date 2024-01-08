@@ -5,13 +5,13 @@ cmd.run('fetch_mmcif.py')
 
 def extractPDB_IDs(infile):
     """
-    Parse CSV file to extract the PDB IDs
+    Extrait les ID PDB du fichier PDB et les met dans une liste
     """
     ID_list = []
     with open(infile, 'r') as file:
         csvfile = csv.reader(file)
         for i in range(2):
-            next(csvfile) # skip the header rows
+            next(csvfile) # ignore les 2 premières lignes (en-tête)
         for row in csvfile:
             ID_list.append(row[1])
     return ID_list
@@ -24,7 +24,7 @@ def loadStructures(PDB_IDs, ref="2GU8"):
     # Structure choisie de la PKACA humaine (code UniProt P17612)
     fetch_mmcif(code=ref, name=ref, assembly=1)
 
-    # Load the protein structures of extracted proteins from CSV
+    # Charge les structures du CSV
     for code in PDB_IDs:
         fetch_mmcif(code=code, name=code, assembly=1)
         cmd.remove("all and not polym")
@@ -40,15 +40,23 @@ def splitStates(PDB_IDs):
             cmd.split_states(object)
             cmd.delete(object)
 
+def getAlphaCarbons(object, ref="2GU8"):
+    """
+    Affiche et retourne une liste du nombre de C-alpha par objet
+    """
+    return cmd.count_atoms(ref + " and " + object + " and name ca")
+
 def alignment(PDB_IDs, ref="2GU8", refined=False):
     """
-    Aligns all the structures in the list to the reference and prints an error message if te RMSD is too high (> 4)
+    Aligne toutes les structures dans la liste par rapport à la référence
+    et affiche un message d'erreur si le RMSD est est trop haut (> 4)
     """
     table = ["PDB_ID","chaîne", "Nb_C_alpha", "RMSD"]
     cLobe = " and resi 183-207" # DFG-APE de 2GU8
     for code in PDB_IDs:
         if code != ref:
             if refined==False:
+                if refined==False:
                 rmsd, n_atoms, n_cycles, n_rmsd_pre, n_atom_pre, score, n_res = cmd.align(mobile=code, target=ref, quiet=1)
             else:
                 rmsd, n_atoms, n_cycles, n_rmsd_pre, n_atom_pre, score, n_res = cmd.align(mobile=code + cLobe, target=ref + cLobe, quiet=1)
@@ -79,8 +87,8 @@ rmsd_list=[]
 
 file = "rcsb_pdb_custom_report.csv"
 list = extractPDB_IDs(file)
-# Uncomment the next line if pymol crashes when trying to align all the proteins from the list
-# list = list[0:10] 
+# Uncomment to fix crashes
+# list = list[0:10]
 loadStructures(list)
 splitStates(list)
 list = cmd.get_object_list()
