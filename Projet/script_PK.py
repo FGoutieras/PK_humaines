@@ -64,7 +64,8 @@ rmsd_list=[]
 
 file = "rcsb_pdb_custom_report.csv"
 list = extractPDB_IDs(file)
-list = list[0:10] # we only keep the first 10 structures for easier testing
+# Uncomment the next line if pymol crashes when trying to align all the proteins from the list
+# list = list[0:10] 
 loadStructures(list)
 splitStates(list)
 list = cmd.get_object_list()
